@@ -11,6 +11,7 @@ public class SignUpOrLogInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_or_log_in);
+        setTitle("Accueil");
     }
 
     private void setListener(){
