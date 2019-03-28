@@ -40,7 +40,12 @@ FirebaseAuth auth;
         EditText password = findViewById(R.id.editText_signUp_password);
         EditText passwordConfirm = findViewById(R.id.editText_signUp_confirm_password);
         EditText userName = findViewById(R.id.editText_signUp_name);
-
+        if(!password.getText().toString().equals( passwordConfirm.getText().toString())){
+            Toast.makeText(getApplicationContext(),
+                    "Les mots de passes ne sont pas identiques.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         auth.createUserWithEmailAndPassword(userEmail.getText().toString(),password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
