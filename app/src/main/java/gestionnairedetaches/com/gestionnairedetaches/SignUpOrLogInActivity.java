@@ -12,6 +12,7 @@ public class SignUpOrLogInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_or_log_in);
         setTitle("Accueil");
+        setListener();
     }
 
     private void setListener(){
