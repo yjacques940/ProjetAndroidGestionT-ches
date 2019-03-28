@@ -31,7 +31,6 @@ public class SignUpOrLogInActivity extends AppCompatActivity {
         });
     }
 
-
     private void sendToSignUpActivity(){
         Intent sendToSignUp = new Intent(this, SignUpActivity.class   );
         startActivity(sendToSignUp);
