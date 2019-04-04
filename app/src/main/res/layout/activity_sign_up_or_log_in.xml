@@ -31,6 +31,7 @@
 
         <Button
             android:id="@+id/button_home_signup"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
@@ -41,6 +42,7 @@
 
         <Button
             android:id="@+id/button_home_login"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
