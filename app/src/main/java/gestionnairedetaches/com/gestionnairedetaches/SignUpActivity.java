@@ -12,15 +12,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import gestionnairedetaches.com.gestionnairedetaches.Model.UserModel;
 
 public class SignUpActivity extends AppCompatActivity {
 FirebaseAuth auth;
+FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         setTitle("Inscription");
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         setListener();
     }
 
@@ -36,10 +44,10 @@ FirebaseAuth auth;
     }
 
     private void signUp() {
-        EditText userEmail = findViewById(R.id.editText_signUp_email);
-        EditText password = findViewById(R.id.editText_signUp_password);
+        final EditText userEmail = findViewById(R.id.editText_signUp_email);
+        final EditText password = findViewById(R.id.editText_signUp_password);
         EditText passwordConfirm = findViewById(R.id.editText_signUp_confirm_password);
-        EditText userName = findViewById(R.id.editText_signUp_name);
+        final EditText userName = findViewById(R.id.editText_signUp_name);
         if(!password.getText().toString().equals( passwordConfirm.getText().toString())){
             Toast.makeText(getApplicationContext(),
                     "Les mots de passes ne sont pas identiques.",
@@ -51,7 +59,14 @@ FirebaseAuth auth;
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
-                    sendUserToMainActivity();
+                    UserModel user = new UserModel(userName.getText().toString(), userEmail.getText().toString(), password.getText().toString());
+
+                    db.collection("User").document(auth.getCurrentUser().getUid().toString()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            sendUserToMainActivity();
+                        }
+                    });
                 }
                 else
                 {

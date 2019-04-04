@@ -7,15 +7,18 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 FirebaseAuth auth;
+FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Tâches");
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         setListener();
     }
 
