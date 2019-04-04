@@ -30,6 +30,17 @@ FirebaseFirestore db;
                 logOut();
             }
         });
+        findViewById(R.id.btn_addTask).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                moveToAddTask();
+            }
+        });
+    }
+
+    private void moveToAddTask(){
+        Intent sendToNewTaskIntent = new Intent (this,NewTaskActivity.class);
+        startActivity(sendToNewTaskIntent);
     }
 
     private void logOut() {

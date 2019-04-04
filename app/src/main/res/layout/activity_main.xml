@@ -23,4 +23,16 @@
         tools:layout_editor_absoluteX="113dp"
         tools:layout_editor_absoluteY="358dp" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_addTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_custom" />
+
 </android.support.constraint.ConstraintLayout>
