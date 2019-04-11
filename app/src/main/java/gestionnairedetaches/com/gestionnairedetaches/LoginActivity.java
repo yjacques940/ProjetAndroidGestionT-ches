@@ -47,7 +47,7 @@ FirebaseAuth auth;
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(),"Error somewhere",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Une erreur est survenue, veuillez vérifier vos identifiants",Toast.LENGTH_SHORT).show();
                 }
             }
         });
