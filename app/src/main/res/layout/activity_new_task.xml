@@ -62,7 +62,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="110dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_Title">
@@ -114,4 +114,12 @@
             </LinearLayout>
         </ScrollView>
     </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="266dp"
+        android:layout_height="125dp"
+        app:srcCompat="@android:color/background_light"
+        tools:layout_editor_absoluteX="59dp"
+        tools:layout_editor_absoluteY="372dp" />
 </android.support.constraint.ConstraintLayout>
