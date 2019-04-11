@@ -18,12 +18,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
 import gestionnairedetaches.com.gestionnairedetaches.Model.TaskModel;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class NewTaskActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
 FirebaseStorage storage;
+FirebaseStorage storageReference;
     FirebaseAuth auth;
     FirebaseFirestore db;
 
@@ -36,6 +41,7 @@ FirebaseStorage storage;
         db = FirebaseFirestore.getInstance();
         setListener();
         storage = FirebaseStorage.getInstance();
+        storageReference = FirebaseStorage.getInstance();
     }
 
     private void setListener(){
@@ -107,6 +113,13 @@ FirebaseStorage storage;
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = (ImageView)findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
+            saveImage(imageBitmap);
         }
+    }
+
+    private void saveImage(Bitmap imageBitmap) {
+        StorageReference storageReference = storage.getReference();
+        StorageReference imageReference = storageReference.child("images");
+        String fileName = LocalDateTime.now();
     }
 }
