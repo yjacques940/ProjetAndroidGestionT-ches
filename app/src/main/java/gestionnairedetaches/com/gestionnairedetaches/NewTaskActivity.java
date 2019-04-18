@@ -44,7 +44,7 @@ public class NewTaskActivity extends AppCompatActivity {
         final EditText title = findViewById(R.id.editText_Title);
         final EditText description = findViewById(R.id.editText_description);
 
-        if(!TextUtils.isEmpty(title.getText()) || !TextUtils.isEmpty(description.getText())){
+        if(!TextUtils.isEmpty(title.getText()) && !TextUtils.isEmpty(description.getText())){
             addTask(title.getText().toString(), description.getText().toString());
         }else{
             alertUserToFillTheEditText();

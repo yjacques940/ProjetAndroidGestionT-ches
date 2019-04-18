@@ -4,6 +4,12 @@ public class TaskModel {
     private String Title;
     private String Description;
 
+    public void setDocumentId(String documentId) {
+        DocumentId = documentId;
+    }
+
+    private String DocumentId;
+
     public TaskModel() {
     }
 
