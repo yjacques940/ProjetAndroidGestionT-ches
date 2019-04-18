@@ -3,15 +3,21 @@ package gestionnairedetaches.com.gestionnairedetaches;
 import android.support.annotation.NonNull;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,11 +25,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import gestionnairedetaches.com.gestionnairedetaches.Model.TaskModel;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
+
+import io.grpc.Context;
 
 public class NewTaskActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -111,15 +122,41 @@ FirebaseStorage storageReference;
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView imageView = (ImageView)findViewById(R.id.imageView);
-            imageView.setImageBitmap(imageBitmap);
+
+            ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArray);
+            byte[] byteData =byteArray.toByteArray();
+
+            Date currentTime = Calendar.getInstance().getTime();
+            StorageReference storageReference = storage.getReference();
+            StorageReference fileReference = storageReference.child("test");
+            StorageReference imageReference =  storageReference.child("test/image" + currentTime + ".jpg");
+            imageReference.getName().equals(imageReference.getName());
+            imageReference.getPath().equals(imageReference.getPath());
+
+            UploadTask uploadTask = imageReference.putBytes(byteData);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+                }
+            });
+
             saveImage(imageBitmap);
         }
     }
 
     private void saveImage(Bitmap imageBitmap) {
+        Date currentTime = Calendar.getInstance().getTime();
         StorageReference storageReference = storage.getReference();
-        StorageReference imageReference = storageReference.child("images");
-        String fileName = LocalDateTime.now();
+        StorageReference imageReference = storageReference.child("images" + currentTime);
+
+
+
     }
 }
