@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseFirestore db;
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private TaskListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     ArrayList<TaskModel> listOfTasks = new ArrayList<TaskModel>();
@@ -114,19 +114,20 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser != null){
             DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
 
-            userDocument.collection("Tasks").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            userDocument.collection("Tasks").whereEqualTo("completed", false).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if (e != null) {
                         Log.w("Listen failed.", e);
                         return;
                     }
-
+                    ArrayList<TaskModel> listOfTasksDocs = new ArrayList<TaskModel>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         TaskModel task = doc.toObject(TaskModel.class);
                         task.setDocumentId(doc.getId());
-                        listOfTasks.add(task);
+                        listOfTasksDocs.add(task);
                     }
+                    mAdapter.setNewList(listOfTasksDocs);
                     mAdapter.notifyDataSetChanged();
                 }
             });

@@ -56,7 +56,7 @@ public class NewTaskActivity extends AppCompatActivity {
     }
 
     private void addTask(String title, String description){
-        TaskModel task = new TaskModel(title, description);
+        TaskModel task = new TaskModel(title, description, false);
         DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
 
         userDocument.collection("Tasks").add(task).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
