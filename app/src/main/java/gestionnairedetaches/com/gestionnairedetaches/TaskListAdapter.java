@@ -1,5 +1,7 @@
 package gestionnairedetaches.com.gestionnairedetaches;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import io.opencensus.tags.Tag;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyViewHolder> {
     private ArrayList<TaskModel> mDataset;
+    private Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -28,6 +31,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
         public Button btnComplete;
         public Button btnDelete;
         public ImageView image;
+
+
         public MyViewHolder(View v) {
             super(v);
             textViewTitre = v.findViewById(R.id.Title);
@@ -41,8 +46,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public TaskListAdapter(ArrayList<TaskModel> myDataset) {
+    public TaskListAdapter(ArrayList<TaskModel> myDataset, Context context) {
         mDataset = myDataset;
+        mContext = context;
     }
 
     // Create new views (invoked by the layout manager)
@@ -67,7 +73,25 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                taskToDisplay.deleteTask();
+                final Dialog dialog = new Dialog(mContext);
+                dialog.setContentView(R.layout.confirm_dialog);
+                Button dialogButtonAccept = dialog.findViewById(R.id.btn_acceptCompletion);
+                Button dialogButtonDeny = dialog.findViewById(R.id.btn_deniedCompletion);
+                dialogButtonAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        taskToDisplay.deleteTask();
+                        dialog.dismiss();
+                    }
+                });
+
+                dialogButtonDeny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         });
         holder.btnComplete.setOnClickListener(new View.OnClickListener() {

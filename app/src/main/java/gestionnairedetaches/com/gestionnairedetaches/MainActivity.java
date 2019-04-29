@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new TaskListAdapter(listOfTasks);
+        mAdapter = new TaskListAdapter(listOfTasks, this);
         recyclerView.setAdapter(mAdapter);
 
         setTitle("Tâches");
