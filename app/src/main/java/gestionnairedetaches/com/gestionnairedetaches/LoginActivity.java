@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -129,6 +130,8 @@ AnimatorSet animatorSet;
     }
 
     private void loginUser() {
+        final ProgressBar progressBar = findViewById(R.id.progressBar_login);
+        progressBar.setVisibility(View.VISIBLE);
         EditText email = findViewById(R.id.editText_login_email);
         EditText password = findViewById(R.id.editText_login_password);
 
@@ -137,10 +140,12 @@ AnimatorSet animatorSet;
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
+                    progressBar.setVisibility(View.INVISIBLE);
                     sendUserToMainActivity();
                 }
                 else
                 {
+                    progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(),"Une erreur est survenue, veuillez vérifier vos identifiants",Toast.LENGTH_SHORT).show();
                 }
             }
