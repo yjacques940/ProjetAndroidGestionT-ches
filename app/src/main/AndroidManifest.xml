@@ -21,5 +21,6 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".NewTaskActivity"></activity>
     </application>
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 
 </manifest>

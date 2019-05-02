@@ -1,6 +1,9 @@
 package gestionnairedetaches.com.gestionnairedetaches;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private TaskListAdapter mAdapter;
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
     private RecyclerView.LayoutManager layoutManager;
 
     ArrayList<TaskModel> listOfTasks = new ArrayList<TaskModel>();
@@ -98,6 +104,37 @@ public class MainActivity extends AppCompatActivity {
         setListener();
 
         initList();
+        setSensors();
+    }
+
+    private void setSensors(){
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                if(count == 2){
+                    moveToAddTask();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Add the following line to register the Session Manager Listener onResume
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
     }
 
     private void setListener() {
