@@ -42,7 +42,13 @@ FirebaseStorage storage;
 FirebaseStorage storageReference;
     FirebaseAuth auth;
     FirebaseFirestore db;
+    Bitmap imageToSave;
+    String pathToImage = "";
+    byte[] byteData;
 
+    public interface Callback{
+        public void callback();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +66,14 @@ FirebaseStorage storageReference;
             @Override
             public void onClick(View v) {
                 addTaskToUser();
+            }
+        });
+
+        findViewById(R.id.button_addImage).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view)
+            {
+                dispatchTakePictureIntent();
             }
         });
     }
@@ -80,33 +94,29 @@ FirebaseStorage storageReference;
         Toast.makeText(getApplicationContext(),"Vous devez remplir les champs", Toast.LENGTH_LONG).show();
     }
 
-    private void addTask(String title, String description){
-        TaskModel task = new TaskModel(title, description);
-        DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
-
-        userDocument.collection("Tasks").add(task).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+    private void addTask(final String title, final String description){
+        saveImage(new Callback() {
             @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if(task.isSuccessful()){
-                    onBackPressed();
-                }else{
-                    alertUserNoTaskWasAdded();
-                }
+            public void callback() {
+                TaskModel task = new TaskModel(title, description,pathToImage);
+                DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
+
+                userDocument.collection("Tasks").add(task).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if(task.isSuccessful()){
+                            onBackPressed();
+                        }else{
+                            alertUserNoTaskWasAdded();
+                        }
+                    }
+                });
             }
         });
+
     }
     private void alertUserNoTaskWasAdded(){
         Toast.makeText(getApplicationContext(),"Erreur lors de l'ajout de la tâche", Toast.LENGTH_LONG).show();
-    }
-
-    private void setListener() {
-        findViewById(R.id.button_addImage).setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view)
-            {
-                dispatchTakePictureIntent();
-            }
-        });
     }
 
     private void dispatchTakePictureIntent() {
@@ -121,42 +131,36 @@ FirebaseStorage storageReference;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageToSave = (Bitmap) extras.get("data");
 
             ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArray);
-            byte[] byteData =byteArray.toByteArray();
+            imageToSave.compress(Bitmap.CompressFormat.JPEG,100,byteArray);
+            byteData =byteArray.toByteArray();
+
+            ImageView imageView = (ImageView)findViewById(R.id.imageView);
+            imageView.setImageBitmap(imageToSave);
 
             Date currentTime = Calendar.getInstance().getTime();
-            StorageReference storageReference = storage.getReference();
-            StorageReference fileReference = storageReference.child("test");
-            StorageReference imageReference =  storageReference.child("test/image" + currentTime + ".jpg");
-            imageReference.getName().equals(imageReference.getName());
-            imageReference.getPath().equals(imageReference.getPath());
-
-            UploadTask uploadTask = imageReference.putBytes(byteData);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                }
-            });
-
-            saveImage(imageBitmap);
+            pathToImage = "images/image" + currentTime + ".jpg";
         }
     }
 
-    private void saveImage(Bitmap imageBitmap) {
-        Date currentTime = Calendar.getInstance().getTime();
+    private void saveImage(final Callback callback) {
         StorageReference storageReference = storage.getReference();
-        StorageReference imageReference = storageReference.child("images" + currentTime);
+        final StorageReference imageReference =  storageReference.child(pathToImage);
 
-
-
+        UploadTask uploadTask = imageReference.putBytes(byteData);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(getApplicationContext(), "Image uploader", Toast.LENGTH_LONG).show();
+                callback.callback();
+            }
+        });
     }
 }

@@ -29,7 +29,7 @@
         android:text="Ajouter une image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <EditText
         android:id="@+id/editText_Title"
@@ -117,9 +117,13 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="266dp"
-        android:layout_height="125dp"
-        app:srcCompat="@android:color/background_light"
-        tools:layout_editor_absoluteX="59dp"
-        tools:layout_editor_absoluteY="372dp" />
+        android:layout_width="132dp"
+        android:layout_height="123dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:srcCompat="@android:color/background_light" />
 </android.support.constraint.ConstraintLayout>
