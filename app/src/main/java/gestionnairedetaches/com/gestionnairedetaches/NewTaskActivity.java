@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.text.TextUtils;
@@ -82,7 +83,11 @@ FirebaseStorage storageReference;
 
         final EditText title = findViewById(R.id.editText_Title);
         final EditText description = findViewById(R.id.editText_description);
+        final Button btnAjouterImage = findViewById(R.id.button_addImage);
+        final Button btnEnregistrer = findViewById(R.id.button_save);
 
+        btnAjouterImage.setEnabled(false);
+        btnEnregistrer.setEnabled(false);
         if(!TextUtils.isEmpty(title.getText()) || !TextUtils.isEmpty(description.getText())){
             addTask(title.getText().toString(), description.getText().toString());
         }else{
@@ -101,12 +106,18 @@ FirebaseStorage storageReference;
                 TaskModel task = new TaskModel(title, description,pathToImage);
                 DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
 
+                final Button btnAjouterImage = findViewById(R.id.button_addImage);
+                final Button btnEnregistrer = findViewById(R.id.button_save);
                 userDocument.collection("Tasks").add(task).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if(task.isSuccessful()){
+                            btnAjouterImage.setEnabled(true);
+                            btnEnregistrer.setEnabled(true);
                             onBackPressed();
                         }else{
+                            btnAjouterImage.setEnabled(true);
+                            btnEnregistrer.setEnabled(true);
                             alertUserNoTaskWasAdded();
                         }
                     }
