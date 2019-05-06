@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     mAdapter.setNewList(listOfTasksDocs);
                     mAdapter.notifyDataSetChanged();
+
                 }
             });
         }

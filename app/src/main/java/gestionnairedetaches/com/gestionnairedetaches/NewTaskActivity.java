@@ -83,12 +83,9 @@ FirebaseStorage storageReference;
 
         final EditText title = findViewById(R.id.editText_Title);
         final EditText description = findViewById(R.id.editText_description);
-        final Button btnAjouterImage = findViewById(R.id.button_addImage);
-        final Button btnEnregistrer = findViewById(R.id.button_save);
 
-        btnAjouterImage.setEnabled(false);
+        setButtonEnable(false);
         if(!TextUtils.isEmpty(title.getText()) && !TextUtils.isEmpty(description.getText())){
-        btnEnregistrer.setEnabled(false);
             addTask(title.getText().toString(), description.getText().toString());
         }else{
             alertUserToFillTheEditText();
@@ -96,35 +93,46 @@ FirebaseStorage storageReference;
     }
 
     private void alertUserToFillTheEditText(){
+
+        setButtonEnable(true);
         Toast.makeText(getApplicationContext(),"Vous devez remplir les champs", Toast.LENGTH_LONG).show();
     }
 
     private void addTask(final String title, final String description){
-        saveImage(new Callback() {
-            @Override
-            public void callback() {
-                TaskModel task = new TaskModel(title, description,pathToImage);
-                DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
+        if(byteData != null){
+            saveImage(new Callback() {
+                @Override
+                public void callback() {
+                    TaskModel task = new TaskModel(title, description,pathToImage,false);
+                    DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
 
-                final Button btnAjouterImage = findViewById(R.id.button_addImage);
-                final Button btnEnregistrer = findViewById(R.id.button_save);
-                userDocument.collection("Tasks").add(task).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if(task.isSuccessful()){
-                            btnAjouterImage.setEnabled(true);
-                            btnEnregistrer.setEnabled(true);
-                            onBackPressed();
-                        }else{
-                            btnAjouterImage.setEnabled(true);
-                            btnEnregistrer.setEnabled(true);
-                            alertUserNoTaskWasAdded();
+                    userDocument.collection("Tasks").add(task).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(getApplicationContext(), "Tâche enregistrée avec succès", Toast.LENGTH_LONG).show();
+                                onBackPressed();
+                            }else{
+                                setButtonEnable(true);
+                                alertUserNoTaskWasAdded();
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        } else {
+            setButtonEnable(true);
+            Toast.makeText(getApplicationContext(), "Vous devez ajoutez une image", Toast.LENGTH_LONG).show();
+        }
 
+    }
+
+    private void setButtonEnable(boolean isEnable){
+        final Button btnAjouterImage = findViewById(R.id.button_addImage);
+        final Button btnEnregistrer = findViewById(R.id.button_save);
+
+        btnAjouterImage.setEnabled(isEnable);
+        btnEnregistrer.setEnabled(isEnable);
     }
     private void alertUserNoTaskWasAdded(){
         Toast.makeText(getApplicationContext(),"Erreur lors de l'ajout de la tâche", Toast.LENGTH_LONG).show();
@@ -169,7 +177,6 @@ FirebaseStorage storageReference;
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getApplicationContext(), "Image uploader", Toast.LENGTH_LONG).show();
                 callback.callback();
             }
         });
