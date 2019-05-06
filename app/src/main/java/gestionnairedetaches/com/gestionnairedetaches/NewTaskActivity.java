@@ -87,8 +87,8 @@ FirebaseStorage storageReference;
         final Button btnEnregistrer = findViewById(R.id.button_save);
 
         btnAjouterImage.setEnabled(false);
+        if(!TextUtils.isEmpty(title.getText()) && !TextUtils.isEmpty(description.getText())){
         btnEnregistrer.setEnabled(false);
-        if(!TextUtils.isEmpty(title.getText()) || !TextUtils.isEmpty(description.getText())){
             addTask(title.getText().toString(), description.getText().toString());
         }else{
             alertUserToFillTheEditText();

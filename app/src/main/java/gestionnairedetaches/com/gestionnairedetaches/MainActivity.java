@@ -7,23 +7,46 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import gestionnairedetaches.com.gestionnairedetaches.Model.TaskModel;
 
 public class MainActivity extends AppCompatActivity {
-FirebaseAuth auth;
-FirebaseFirestore db;
+    FirebaseAuth auth;
+    FirebaseFirestore db;
+
+    private RecyclerView recyclerView;
+    private TaskListAdapter mAdapter;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
-boolean doubleBackToExitPressedOnce = false;
+    private RecyclerView.LayoutManager layoutManager;
+
+    ArrayList<TaskModel> listOfTasks = new ArrayList<TaskModel>();
+
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
@@ -67,10 +90,20 @@ boolean doubleBackToExitPressedOnce = false;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new TaskListAdapter(listOfTasks, this);
+        recyclerView.setAdapter(mAdapter);
+
         setTitle("Tâches");
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         setListener();
+
+        initList();
         setSensors();
     }
 
@@ -111,6 +144,31 @@ boolean doubleBackToExitPressedOnce = false;
                 moveToAddTask();
             }
         });
+    }
+
+    private void initList(){
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser != null){
+            DocumentReference userDocument = db.collection("User").document(auth.getCurrentUser().getUid().toString());
+
+            userDocument.collection("Tasks").whereEqualTo("completed", false).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w("Listen failed.", e);
+                        return;
+                    }
+                    ArrayList<TaskModel> listOfTasksDocs = new ArrayList<TaskModel>();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        TaskModel task = doc.toObject(TaskModel.class);
+                        task.setDocumentId(doc.getId());
+                        listOfTasksDocs.add(task);
+                    }
+                    mAdapter.setNewList(listOfTasksDocs);
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     private void moveToAddTask(){

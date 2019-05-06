@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +45,8 @@ FirebaseFirestore db;
     }
 
     private void signUp() {
+        final ProgressBar progressBar = findViewById(R.id.progressBar_signup);
+        progressBar.setVisibility(View.VISIBLE);
         final EditText userEmail = findViewById(R.id.editText_signUp_email);
         final EditText password = findViewById(R.id.editText_signUp_password);
         EditText passwordConfirm = findViewById(R.id.editText_signUp_confirm_password);
@@ -64,12 +67,14 @@ FirebaseFirestore db;
                     db.collection("User").document(auth.getCurrentUser().getUid().toString()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            progressBar.setVisibility(View.INVISIBLE);
                             sendUserToMainActivity();
                         }
                     });
                 }
                 else
                 {
+                    progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(),
                             "Une erreur est survenue lors de l'inscription. Veuillez réessayer plus tard.",
                             Toast.LENGTH_SHORT).show();
