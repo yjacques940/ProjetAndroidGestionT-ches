@@ -28,6 +28,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="TextView"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -71,13 +72,14 @@
 
             <TextView
                 android:id="@+id/Title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/imageView_taskImage"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_complete"/>
 
         </android.support.constraint.ConstraintLayout>
 

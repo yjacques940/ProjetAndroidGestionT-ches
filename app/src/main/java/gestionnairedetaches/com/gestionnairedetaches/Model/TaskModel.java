@@ -11,13 +11,16 @@ public class TaskModel {
 
     private String Title;
     private String Description;
+    private String PathToImage;
     private Boolean Completed;
 
-    public TaskModel(String title, String description, Boolean completed) {
+    public TaskModel(String title, String description, String pathToImage, Boolean completed) {
         Title = title;
         Description = description;
+        PathToImage = pathToImage;
         Completed = completed;
     }
+
 
     public void setDocumentId(String documentId) {
         DocumentId = documentId;
@@ -45,20 +48,23 @@ public class TaskModel {
         Description = description;
     }
 
-    public void deleteTask(){
+
+    public void deleteTask() {
 
         FirebaseAuth auth;
         FirebaseFirestore db;
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        Log.d("tag", "delete "+DocumentId);
+        Log.d("tag", "delete " + DocumentId);
         FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser != null) {
+        if (currentUser != null) {
             DocumentReference userDocument = db.collection("User").document(currentUser.getUid().toString());
 
             userDocument.collection("Tasks").document(DocumentId).delete();
         }
     }
+
+
 
     public void completeTask(){
         FirebaseAuth auth;
@@ -73,6 +79,14 @@ public class TaskModel {
 
             userDocument.collection("Tasks").document(DocumentId).set(this);
         }
+    }
+
+    public String getPathToImage() {
+        return PathToImage;
+    }
+
+    public void setPathToImage(String pathToImage) {
+        PathToImage = pathToImage;
     }
 
     public Boolean getCompleted() {
